@@ -1,0 +1,91 @@
+Severe bug:
+***********
+controller.js (line 95):
+------------------------
+Controller.prototype.adddItem = function (title) {
+    =>
+    Controller.prototype.addItem = function (title) {
+
+potential conflict duplicate id:
+********************************
+store.js(line 84):
+---------
+```
+// Generate an ID
+var newId = ""; 
+var charset = "0123456789";
+
+for (var i = 0; i < 6; i++) {
+    newId += charset.charAt(Math.floor(Math.random() * charset.length));
+}
+```
+    =>
+    var newId = new Date().getTime();
+
+Other improvements and optimizations:
+*************************************
+
+helper.js: double negation
+----------
+(line 15: ):
+
+target.addEventListener(type, callback, !!useCapture);
+    =>
+    target.addEventListener(type, callback, useCapture);
+
+controller.js:
+--------------
+ remove whitespaces from both sides of a string with the ES5 method .trim,
+ instead of the manually way.):
+
+(line 123):
+```
+while (title[0] === " ") {
+    title = title.slice(1);
+}
+
+while (title[title.length-1] === " ") {
+    title = title.slice(0, -1);
+}
+```
+    =>
+    title = title.trim();
+
+store.js:
+---------
+ it is better practice to use "strict equality: ===", instead of "abstract equality: =="
+ without type checking:
+
+(line 128):
+if (todos[i].id == id) { 
+    => 
+    if (todos[i].id === id) {
+
+(line 134):
+if (todos[i].id == todoId) {
+    =>
+    if (todos[i].id === todoId) {
+
+
+
+line(122):
+```
+for (var i = 0; i < todos.length; i++) {
+    if (todos[i].id === id) {
+        todoId = todos[i].id;
+    }
+}
+
+for (var i = 0; i < todos.length; i++) {
+    if (todos[i].id === todoId) {
+        todos.splice(i, 1);
+    }
+}
+```
+    =>
+    for (var i = 0; i < todos.length; i++) {
+        if (todos[i].id === id) {
+            todos.splice(i, 1);
+            break;
+        }
+	}
